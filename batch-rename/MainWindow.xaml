@@ -29,16 +29,16 @@
                             Method:
                         </TextBlock>
                         <ComboBox
-                            x:Name="cbMethodChooser">
-                            <ComboBoxItem>New Case</ComboBoxItem>
+                            x:Name="cbMethodChooser"
+                            Width="125">
+                            <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
+                            <ComboBoxItem>New case</ComboBoxItem>
+                            <ComboBoxItem>Fullname normalize</ComboBoxItem>
                             <ComboBoxItem>Move</ComboBoxItem>
+                            <ComboBoxItem>Unique name</ComboBoxItem>
                         </ComboBox>
-                        <Button Click="btnAddMethod_Click">
-                            Add
-                        </Button>
-                        <Button Click="btnClearMethod_Click">
-                            Clear
-                        </Button>
+                        <Button Click="btnAddMethod_Click">Add</Button>
+                        <Button Click="btnClearMethod_Click">Clear</Button>
                     </ToolBar>
                     <ToolBar>
                         <TextBlock
@@ -50,15 +50,48 @@
                         <Button>Save</Button>
                     </ToolBar>
                 </ToolBarTray>
-                <ListView>
+                <ListView x:Name="lvMethods">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" Background="Red"/>
+                                <Button Click="btnRemoveMethod_Click" Tag="{Binding Name}">Remove</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </DockPanel>
             <TabControl Grid.Column="1">
                 <TabItem Header="Rename Files">
-                    
+                    <DockPanel>
+                        <ToolBarTray DockPanel.Dock="Top">
+                            <ToolBar>
+                                <Button Click="btnAddFiles_Click">Add</Button>
+                                <Button Click="btnClearFiles_Click">Clear</Button>
+                            </ToolBar>
+                        </ToolBarTray>
+                        <ListView x:Name="lvFiles">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}" />
+                                    <GridViewColumn Header="New name" Width="100" DisplayMemberBinding="{Binding NewName}" />
+                                    <GridViewColumn Header="Path" Width="200" DisplayMemberBinding="{Binding Path}" />
+                                    <GridViewColumn Header="Error" Width="100" DisplayMemberBinding="{Binding Error}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </DockPanel>
                 </TabItem>
                 <TabItem Header="Rename Folders">
-                    
+                    <DockPanel>
+                        <ToolBarTray DockPanel.Dock="Top">
+                            <ToolBar>
+                                <Button Click="btnAddFolders_Click">Add</Button>
+                                <Button Click="btnClearFolders_Click">Clear</Button>
+                            </ToolBar>
+                        </ToolBarTray>
+                        <ListView x:Name="lvFolders"/>
+                    </DockPanel>
                 </TabItem>
             </TabControl>
         </Grid>

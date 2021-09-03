@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,12 +28,49 @@ namespace batch_rename
 
         private void btnAddMethod_Click(object sender, RoutedEventArgs e)
         {
-
+            lvMethods.Items.Add(new Method(cbMethodChooser.SelectedIndex.ToString(), cbMethodChooser.Text));
         }
 
         private void btnClearMethod_Click(object sender, RoutedEventArgs e)
         {
+            lvMethods.Items.Clear();
+        }
 
+        private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
+        {
+            Button btnRemoveMethod = sender as Button;
+            int index = int.Parse(btnRemoveMethod.Tag.ToString());
+        }
+
+        private void btnAddFiles_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = true;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                for (int i = 0; i < openFileDialog.FileNames.Length; i++)
+                {
+                    lvFiles.Items.Add(new File(
+                        openFileDialog.SafeFileNames[i],
+                        "",
+                        openFileDialog.FileNames[i],
+                        ""));
+                }
+            }
+        }
+
+        private void btnClearFiles_Click(object sender, RoutedEventArgs e)
+        {
+            lvFolders.Items.Clear();
+        }
+
+        private void btnAddFolders_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void btnClearFolders_Click(object sender, RoutedEventArgs e)
+        {
+            lvFiles.Items.Clear();
         }
     }
 }
