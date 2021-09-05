@@ -21,42 +21,55 @@
             </Grid.ColumnDefinitions>
 
             <DockPanel Grid.Column="0">
-                <ToolBarTray DockPanel.Dock="Top">
-                    <ToolBar>
-                        <TextBlock
-                            Padding="2"
-                            VerticalAlignment="Center">
-                            Method:
-                        </TextBlock>
-                        <ComboBox
+                <StackPanel DockPanel.Dock="Top">
+                    <ToolBarTray >
+                        <ToolBar>
+                            <TextBlock Padding="2" VerticalAlignment="Center">Method:</TextBlock>
+                            <ComboBox
                             x:Name="cbMethodChooser"
                             Width="125">
-                            <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
-                            <ComboBoxItem>New case</ComboBoxItem>
-                            <ComboBoxItem>Fullname normalize</ComboBoxItem>
-                            <ComboBoxItem>Move</ComboBoxItem>
-                            <ComboBoxItem>Unique name</ComboBoxItem>
-                        </ComboBox>
-                        <Button Click="btnAddMethod_Click">Add</Button>
-                        <Button Click="btnClearMethod_Click">Clear</Button>
-                    </ToolBar>
-                    <ToolBar>
-                        <TextBlock
+                                <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
+                                <ComboBoxItem>New case</ComboBoxItem>
+                                <ComboBoxItem>Fullname normalize</ComboBoxItem>
+                                <ComboBoxItem>Move</ComboBoxItem>
+                                <ComboBoxItem>Unique name</ComboBoxItem>
+                            </ComboBox>
+                            <Button Click="btnAddMethod_Click">Add</Button>
+                            <Button Click="btnRemoveMethod_Click">Remove</Button>
+                            <Button Click="btnClearMethod_Click">Clear</Button>
+                        </ToolBar>
+                    </ToolBarTray>
+                    <ToolBarTray>
+                        <ToolBar>
+                            <TextBlock
                             Padding="2"
                             VerticalAlignment="Center">
                             Preset:
-                        </TextBlock>
-                        <Button>Open</Button>
-                        <Button>Save</Button>
-                    </ToolBar>
-                </ToolBarTray>
+                            </TextBlock>
+                            <Button>Open</Button>
+                            <Button>Save</Button>
+                        </ToolBar>
+                    </ToolBarTray>
+                </StackPanel>
                 <ListView x:Name="lvMethods">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Name}" Background="Red"/>
-                                <Button Click="btnRemoveMethod_Click" Tag="{Binding Name}">Remove</Button>
-                            </StackPanel>
+                            <Border BorderThickness="1" BorderBrush="#FFACACAC">
+                                <StackPanel Background="#FFEEEEEE">
+                                    <TextBlock Text="{Binding Name}" Padding="5,2.5,5,0" />
+                                    <TextBlock 
+                                        Padding="5,0,5,2.5" 
+                                        Foreground="#FF0000FF" 
+                                        Cursor="Hand" 
+                                        Tag="{Binding Name}"
+                                        MouseDown="tblConfig_MouseDown">Configure...</TextBlock>
+                                </StackPanel>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

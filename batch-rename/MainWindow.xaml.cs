@@ -28,7 +28,15 @@ namespace batch_rename
 
         private void btnAddMethod_Click(object sender, RoutedEventArgs e)
         {
-            lvMethods.Items.Add(new Method(cbMethodChooser.SelectedIndex.ToString(), cbMethodChooser.Text));
+            bool isExisted = false;
+            foreach (var item in lvMethods.Items.OfType<Method>())
+                if (item.Name == cbMethodChooser.Text)
+                {
+                    isExisted = true;
+                    break;
+                }
+            if (!isExisted)
+                lvMethods.Items.Add(new Method(cbMethodChooser.SelectedIndex.ToString(), cbMethodChooser.Text));
         }
 
         private void btnClearMethod_Click(object sender, RoutedEventArgs e)
@@ -38,8 +46,8 @@ namespace batch_rename
 
         private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
         {
-            Button btnRemoveMethod = sender as Button;
-            int index = int.Parse(btnRemoveMethod.Tag.ToString());
+            if (lvMethods.SelectedIndex != -1)
+                lvMethods.Items.RemoveAt(lvMethods.SelectedIndex);
         }
 
         private void btnAddFiles_Click(object sender, RoutedEventArgs e)
@@ -71,6 +79,32 @@ namespace batch_rename
         private void btnClearFolders_Click(object sender, RoutedEventArgs e)
         {
             lvFiles.Items.Clear();
+        }
+
+        private void tblConfig_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            string tag = (sender as TextBlock).Tag.ToString();
+            Window window;
+
+            switch (tag)
+            {
+                case "Replace":
+                    window = new MDReplace();
+                    break;
+                case "New case":
+                    window = new MDNewCase();
+                    break;
+                case "Fullname normalize":
+                    window = new MDFullnameNormalize();
+                    break;
+                case "Move":
+                    window = new MDMove();
+                    break;
+                default:
+                    window = new MDUniqueName();
+                    break;
+            }
+            window.ShowDialog();
         }
     }
 }
