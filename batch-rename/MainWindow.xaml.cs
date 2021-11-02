@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,28 +84,7 @@ namespace batch_rename
 
         private void tblConfig_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            string tag = (sender as TextBlock).Tag.ToString();
-            Window window;
 
-            switch (tag)
-            {
-                case "Replace":
-                    window = new MDReplace();
-                    break;
-                case "New case":
-                    window = new MDNewCase();
-                    break;
-                case "Fullname normalize":
-                    window = new MDFullnameNormalize();
-                    break;
-                case "Move":
-                    window = new MDMove();
-                    break;
-                default:
-                    window = new MDUniqueName();
-                    break;
-            }
-            window.ShowDialog();
         }
     }
 }
