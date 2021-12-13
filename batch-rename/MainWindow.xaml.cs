@@ -1,8 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Contract;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,9 +25,46 @@ namespace batch_rename
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Dictionary<string, IRenameRuleParser> _prototypes = new Dictionary<string, IRenameRuleParser>();
+        private BindingList<string> _rules = new BindingList<string>();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void winMain_Loaded(object sender, RoutedEventArgs e)
+        {
+            var exeFolder = AppDomain.CurrentDomain.BaseDirectory;
+            var dlls = new DirectoryInfo(exeFolder).GetFiles("*.dll");
+
+            foreach (var dll in dlls)
+            {
+                var assembly = Assembly.LoadFile(dll.FullName);
+                var types = assembly.GetTypes();
+
+                foreach (var type in types)
+                {
+                    if (type.IsClass)
+                    {
+                        if (typeof(IRenameRuleParser).IsAssignableFrom(type))
+                        {
+                            var shape = Activator.CreateInstance(type) as IRenameRuleParser;
+                            _prototypes.Add(shape.Name, shape);
+                        }
+                    }
+                }
+            }
+
+
+            foreach (var item in _prototypes)
+            {
+                var rule = item.Value as IRenameRuleParser;
+
+                _rules.Add(rule.Name);
+            }
+
+            lvMethodChooser.ItemsSource = _rules;
         }
 
         private void btnAddMethod_Click(object sender, RoutedEventArgs e)

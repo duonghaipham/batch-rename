@@ -1,10 +1,10 @@
-﻿using System;
+using RenameRule;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace batch_rename
+namespace ReplaceRule
 {
-    class ReplaceRule : IRenameRule
+    public class ReplaceRule: IRenameRule
     {
         private List<string> needles;
         private string replacer;

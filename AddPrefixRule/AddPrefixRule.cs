@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using RenameRule;
+using System;
 
-namespace batch_rename
+namespace AddPrefixRule
 {
-    class AddPrefixRule : IRenameRule
+    public class AddPrefixRule : IRenameRule
     {
         private string prefix;
+
         public AddPrefixRule(string prefix)
         {
             this.prefix = prefix;

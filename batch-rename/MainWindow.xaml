@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:batch_rename"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        Loaded="winMain_Loaded">
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
@@ -28,11 +29,7 @@
                             <ComboBox
                             x:Name="cbMethodChooser"
                             Width="125">
-                                <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
-                                <ComboBoxItem>New case</ComboBoxItem>
-                                <ComboBoxItem>Fullname normalize</ComboBoxItem>
-                                <ComboBoxItem>Move</ComboBoxItem>
-                                <ComboBoxItem>Unique name</ComboBoxItem>
+
                             </ComboBox>
                             <Button Click="btnAddMethod_Click">Add</Button>
                             <Button Click="btnRemoveMethod_Click">Remove</Button>
@@ -50,6 +47,13 @@
                             <Button>Save</Button>
                         </ToolBar>
                     </ToolBarTray>
+                    <ListView x:Name="lvMethodChooser">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
                 <ListView x:Name="lvMethods">
                     <ListView.ItemContainerStyle>
