@@ -7,6 +7,29 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Loaded="winMain_Loaded">
+    <Window.Resources>
+        <local:RuleTemplateSelector x:Key="ruleTemplateSelector" />
+        <DataTemplate x:Key="template1">
+            <Border BorderThickness="1" BorderBrush="#FFACACAC">
+                <StackPanel>
+                    <TextBlock
+                        Padding="5"
+                        Background="#85C9E9"
+                        Text="Add prefix" />
+                    <Button
+                        Content="x" Tag="{Binding Index}" Click="btnRemoveMethodItself_Click" />
+                    <StackPanel>
+                        <Label Content="Prefix:" />
+                        <TextBox />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="template2">
+            <TextBlock Text="World" />
+        </DataTemplate>
+    </Window.Resources>
+    
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
@@ -26,12 +49,6 @@
                     <ToolBarTray >
                         <ToolBar>
                             <TextBlock Padding="2" VerticalAlignment="Center">Method:</TextBlock>
-                            <ComboBox
-                            x:Name="cbMethodChooser"
-                            Width="125">
-
-                            </ComboBox>
-                            <Button Click="btnAddMethod_Click">Add</Button>
                             <Button Click="btnRemoveMethod_Click">Remove</Button>
                             <Button Click="btnClearMethod_Click">Clear</Button>
                         </ToolBar>
@@ -47,35 +64,16 @@
                             <Button>Save</Button>
                         </ToolBar>
                     </ToolBarTray>
-                    <ListView x:Name="lvMethodChooser">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Button Content="{Binding}" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <WrapPanel x:Name="wpMethodChooser" />
                 </StackPanel>
-                <ListView x:Name="lvMethods">
+                <ListView
+                    x:Name="lvRunMethods"
+                    ItemTemplateSelector="{StaticResource ruleTemplateSelector}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="1" BorderBrush="#FFACACAC">
-                                <StackPanel Background="#FFEEEEEE">
-                                    <TextBlock Text="{Binding Name}" Padding="5,2.5,5,0" />
-                                    <TextBlock 
-                                        Padding="5,0,5,2.5" 
-                                        Foreground="#FF0000FF" 
-                                        Cursor="Hand" 
-                                        Tag="{Binding Name}"
-                                        MouseDown="tblConfig_MouseDown">Configure...</TextBlock>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
                 </ListView>
             </DockPanel>
             <TabControl Grid.Column="1">

@@ -26,7 +26,7 @@ namespace batch_rename
     public partial class MainWindow : Window
     {
         private Dictionary<string, IRenameRuleParser> _prototypes = new Dictionary<string, IRenameRuleParser>();
-        private BindingList<string> _rules = new BindingList<string>();
+        private BindingList<RunRule> _rules = new BindingList<RunRule>();
 
         public MainWindow()
         {
@@ -56,39 +56,54 @@ namespace batch_rename
                 }
             }
 
-
             foreach (var item in _prototypes)
             {
                 var rule = item.Value as IRenameRuleParser;
 
-                _rules.Add(rule.Name);
+                Button button = new Button()
+                {
+                    Content = rule.Name,
+                    Tag = rule.Name
+                };
+
+                button.Click += btnPrototype_Click;
+                wpMethodChooser.Children.Add(button);
             }
 
-            lvMethodChooser.ItemsSource = _rules;
+            lvRunMethods.ItemsSource = _rules;
         }
 
-        private void btnAddMethod_Click(object sender, RoutedEventArgs e)
+        private void btnPrototype_Click(object sender, RoutedEventArgs e)
         {
-            bool isExisted = false;
-            foreach (var item in lvMethods.Items.OfType<Method>())
-                if (item.Name == cbMethodChooser.Text)
+            string selectedTagName = (sender as Button).Tag as String;
+
+            if (selectedTagName == "Add prefix")
+            {
+                _rules.Add(new RunRule()
                 {
-                    isExisted = true;
-                    break;
-                }
-            if (!isExisted)
-                lvMethods.Items.Add(new Method(cbMethodChooser.SelectedIndex.ToString(), cbMethodChooser.Text));
+                    Index = _rules.Count,
+                    Name = "Add prefix"
+                });
+            }
+            else
+            {
+                _rules.Add(new RunRule()
+                {
+                    Index = _rules.Count,
+                    Name = "Add suffix"
+                });
+            }
         }
 
         private void btnClearMethod_Click(object sender, RoutedEventArgs e)
         {
-            lvMethods.Items.Clear();
+            _rules.Clear();
         }
 
         private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
         {
-            if (lvMethods.SelectedIndex != -1)
-                lvMethods.Items.RemoveAt(lvMethods.SelectedIndex);
+            if (lvRunMethods.SelectedIndex != -1)
+                _rules.RemoveAt(lvRunMethods.SelectedIndex);
         }
 
         private void btnAddFiles_Click(object sender, RoutedEventArgs e)
@@ -125,6 +140,15 @@ namespace batch_rename
         private void tblConfig_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        private void btnRemoveMethodItself_Click(object sender, RoutedEventArgs e)
+        {
+            Button btnRemove = sender as Button;
+            _rules.RemoveAt(Int32.Parse(btnRemove.Tag.ToString()));
+
+            for (int i = 0; i < _rules.Count; i++)
+                _rules[i].Index = i;
         }
     }
 }

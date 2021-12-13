@@ -14,7 +14,7 @@ namespace AddSuffixRule
 
         public string Rename(string original)
         {
-            return $"{suffix}{original}";
+            return $"{original}{suffix}";
         }
     }
 }
