@@ -1,5 +1,4 @@
-﻿using AddPrefixRule;
-using Contract;
+﻿using Contract;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,8 @@ namespace batch_rename
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Dictionary<string, IRenameRuleParser> _prototypes = new Dictionary<string, IRenameRuleParser>();
+        private Dictionary<string, BaseWindow> _windowPrototypes = new Dictionary<string, BaseWindow>();
+        private Dictionary<string, IRenameRuleParser> _ruleParserPrototypes = new Dictionary<string, IRenameRuleParser>();
         private BindingList<RunRule> _rules = new BindingList<RunRule>();
 
         public MainWindow()
@@ -40,16 +40,22 @@ namespace batch_rename
                     {
                         if (typeof(IRenameRuleParser).IsAssignableFrom(type))
                         {
-                            var shape = Activator.CreateInstance(type) as IRenameRuleParser;
-                            _prototypes.Add(shape.Name, shape);
+                            var ruleParser = Activator.CreateInstance(type) as IRenameRuleParser;
+                            _ruleParserPrototypes.Add(ruleParser.Name, ruleParser);
+                        }
+
+                        if (typeof(BaseWindow).IsAssignableFrom(type))
+                        {
+                            var window = Activator.CreateInstance(type) as BaseWindow;
+                            _windowPrototypes.Add(window.ClassName, window);
                         }
                     }
                 }
             }
 
-            foreach (var item in _prototypes)
+            foreach (var item in _ruleParserPrototypes)
             {
-                var rule = item.Value as IRenameRuleParser;
+                var rule = item.Value;
 
                 Button button = new Button()
                 {
@@ -71,19 +77,9 @@ namespace batch_rename
             _rules.Add(new RunRule()
             {
                 Index = _rules.Count,
-                Name = "Add prefix",
+                Name = selectedTagName,
                 Command = ""
             });
-        }
-
-        private void btnIntent_Click(object sender, RoutedEventArgs e)
-        {
-            int index = Int32.Parse((sender as Button).Tag.ToString());
-            if (_rules[index].Name == "Add prefix")
-            {
-                AddPrefixWindow window = new AddPrefixWindow();
-                window.ShowDialog();
-            }
         }
 
         private void btnClearMethod_Click(object sender, RoutedEventArgs e)
@@ -125,7 +121,7 @@ namespace batch_rename
         private void btnRemoveMethodItself_Click(object sender, RoutedEventArgs e)
         {
             Button btnRemove = sender as Button;
-            _rules.RemoveAt(Int32.Parse(btnRemove.Tag.ToString()));
+            _rules.RemoveAt(int.Parse(btnRemove.Tag.ToString()));
 
             UpdateOrder();
         }
@@ -141,16 +137,24 @@ namespace batch_rename
 
         private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
         {
-
+            if (lvRunRules.SelectedIndex != -1)
+            {
+                _rules.RemoveAt(lvRunRules.SelectedIndex);
+                UpdateOrder();
+            }
         }
 
         private void btnEditRule_Click(object sender, RoutedEventArgs e)
         {
-            int index = Int32.Parse((sender as Button).Tag.ToString());
-            if (_rules[index].Name == "Add prefix")
+            int index = int.Parse((sender as Button).Tag.ToString());
+            RunRule rule = _rules[index];
+
+            var window = _windowPrototypes[rule.Name].CreateInstance();
+            window.Command = rule.Command;
+
+            if ((bool)window.ShowDialog())
             {
-                AddPrefixWindow window = new AddPrefixWindow();
-                window.ShowDialog();
+                _rules[index].Command = window.Command;
             }
         }
     }

@@ -7,24 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Loaded="winMain_Loaded">
-    <Window.Resources>
-        <local:RuleTemplateSelector x:Key="ruleTemplateSelector" />
-        <DataTemplate x:Key="template1">
-            <Border BorderThickness="1" BorderBrush="#FFACACAC">
-                <StackPanel>
-                    
-                    <StackPanel>
-                        <Label Content="Prefix:" />
-                        <TextBox Name="txtPrefix" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-        <DataTemplate x:Key="template2">
-            <TextBlock Text="World" />
-        </DataTemplate>
-    </Window.Resources>
-    
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
@@ -61,11 +43,7 @@
                     </ToolBarTray>
                     <WrapPanel x:Name="wpMethodChooser" />
                 </StackPanel>
-                <!--<StackPanel
-                    x:Name="spRunRule" />-->
-                <ListView
-                    Name="lvRunRules"
-                    ItemTemplateSelector="{StaticResource ruleTemplateSelector}">
+                <ListView x:Name="lvRunRules">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />

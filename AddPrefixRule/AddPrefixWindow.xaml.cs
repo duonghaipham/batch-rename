@@ -1,25 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Contract;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AddPrefixRule
 {
     /// <summary>
     /// Interaction logic for AddPrefixWindow.xaml
     /// </summary>
-    public partial class AddPrefixWindow : Window
+    public partial class AddPrefixWindow : BaseWindow
     {
+        public override string ClassName => "AddPrefix";
+
         public AddPrefixWindow()
         {
             InitializeComponent();
+        }
+
+        public override BaseWindow CreateInstance()
+        {
+            return new AddPrefixWindow();
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            Command = $"{ClassName} {txtPrefix.Text}";
+            DialogResult = true;
+        }
+
+        private void BaseWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddPrefixRuleParser parser = new AddPrefixRuleParser();
+            if (!string.IsNullOrEmpty(Command))
+            {
+                AddPrefixRule rule = parser.Parse(Command) as AddPrefixRule;
+                txtPrefix.Text = rule.Prefix;
+            }
         }
     }
 }

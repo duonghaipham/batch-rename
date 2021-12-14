@@ -5,16 +5,16 @@ namespace AddPrefixRule
 {
     public class AddPrefixRule : IRenameRule
     {
-        private string prefix;
+        public string Prefix { get; }
 
         public AddPrefixRule(string prefix)
         {
-            this.prefix = prefix;
+            Prefix = prefix;
         }
 
         public string Rename(string original)
         {
-            return $"{prefix}{original}";
+            return $"{Prefix}{original}";
         }
     }
 }
