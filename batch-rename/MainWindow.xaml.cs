@@ -1,22 +1,13 @@
-﻿using Contract;
+﻿using AddPrefixRule;
+using Contract;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace batch_rename
 {
@@ -70,40 +61,34 @@ namespace batch_rename
                 wpMethodChooser.Children.Add(button);
             }
 
-            lvRunMethods.ItemsSource = _rules;
+            lvRunRules.ItemsSource = _rules;
         }
 
         private void btnPrototype_Click(object sender, RoutedEventArgs e)
         {
             string selectedTagName = (sender as Button).Tag as String;
 
-            if (selectedTagName == "Add prefix")
+            _rules.Add(new RunRule()
             {
-                _rules.Add(new RunRule()
-                {
-                    Index = _rules.Count,
-                    Name = "Add prefix"
-                });
-            }
-            else
+                Index = _rules.Count,
+                Name = "Add prefix",
+                Command = ""
+            });
+        }
+
+        private void btnIntent_Click(object sender, RoutedEventArgs e)
+        {
+            int index = Int32.Parse((sender as Button).Tag.ToString());
+            if (_rules[index].Name == "Add prefix")
             {
-                _rules.Add(new RunRule()
-                {
-                    Index = _rules.Count,
-                    Name = "Add suffix"
-                });
+                AddPrefixWindow window = new AddPrefixWindow();
+                window.ShowDialog();
             }
         }
 
         private void btnClearMethod_Click(object sender, RoutedEventArgs e)
         {
             _rules.Clear();
-        }
-
-        private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
-        {
-            if (lvRunMethods.SelectedIndex != -1)
-                _rules.RemoveAt(lvRunMethods.SelectedIndex);
         }
 
         private void btnAddFiles_Click(object sender, RoutedEventArgs e)
@@ -137,18 +122,36 @@ namespace batch_rename
             lvFiles.Items.Clear();
         }
 
-        private void tblConfig_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
         private void btnRemoveMethodItself_Click(object sender, RoutedEventArgs e)
         {
             Button btnRemove = sender as Button;
             _rules.RemoveAt(Int32.Parse(btnRemove.Tag.ToString()));
 
+            UpdateOrder();
+        }
+
+        private void UpdateOrder()
+        {
             for (int i = 0; i < _rules.Count; i++)
                 _rules[i].Index = i;
+
+            lvRunRules.ItemsSource = null;
+            lvRunRules.ItemsSource = _rules;
+        }
+
+        private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEditRule_Click(object sender, RoutedEventArgs e)
+        {
+            int index = Int32.Parse((sender as Button).Tag.ToString());
+            if (_rules[index].Name == "Add prefix")
+            {
+                AddPrefixWindow window = new AddPrefixWindow();
+                window.ShowDialog();
+            }
         }
     }
 }

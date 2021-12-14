@@ -8,7 +8,7 @@ namespace AddPrefixRule
 {
     public class AddPrefixRuleParser : IRenameRuleParser
     {
-        public string Name => "Add prefix";
+        public string Name => "AddPrefix";
 
         public IRenameRule Parse(string line)
         {

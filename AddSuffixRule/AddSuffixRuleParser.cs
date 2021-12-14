@@ -8,7 +8,7 @@ namespace AddSuffixRule
 {
     public class AddSuffixRuleParser : IRenameRuleParser
     {
-        public string Name => "Add suffix";
+        public string Name => "AddSuffix";
 
         public IRenameRule Parse(string line)
         {

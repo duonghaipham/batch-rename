@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AddPrefixRule\AddPrefixRule.csproj" />
     <ProjectReference Include="..\RenameRule\Contract.csproj" />
   </ItemGroup>
 

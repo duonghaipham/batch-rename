@@ -12,15 +12,10 @@
         <DataTemplate x:Key="template1">
             <Border BorderThickness="1" BorderBrush="#FFACACAC">
                 <StackPanel>
-                    <TextBlock
-                        Padding="5"
-                        Background="#85C9E9"
-                        Text="Add prefix" />
-                    <Button
-                        Content="x" Tag="{Binding Index}" Click="btnRemoveMethodItself_Click" />
+                    
                     <StackPanel>
                         <Label Content="Prefix:" />
-                        <TextBox />
+                        <TextBox Name="txtPrefix" />
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -66,14 +61,44 @@
                     </ToolBarTray>
                     <WrapPanel x:Name="wpMethodChooser" />
                 </StackPanel>
+                <!--<StackPanel
+                    x:Name="spRunRule" />-->
                 <ListView
-                    x:Name="lvRunMethods"
+                    Name="lvRunRules"
                     ItemTemplateSelector="{StaticResource ruleTemplateSelector}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="LightBlue">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Margin="5"
+                                    Text="Add prefix"/>
+                                <Button
+                                    Content="Edit"
+                                    Tag="{Binding Index}"
+                                    Click="btnEditRule_Click"
+                                    Grid.Column="1"/>
+                                <Button
+                                    Margin="5"
+                                    Background="Salmon"
+                                    BorderBrush="Transparent"
+                                    Width="10"
+                                    Height="10"
+                                    Tag="{Binding Index}"
+                                    Click="btnRemoveMethodItself_Click"
+                                    Grid.Column="2"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </DockPanel>
             <TabControl Grid.Column="1">
