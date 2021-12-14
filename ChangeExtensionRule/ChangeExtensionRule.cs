@@ -1,5 +1,4 @@
-using RenameRule;
-using System;
+using Contract;
 using System.Text.RegularExpressions;
 
 namespace ChangeExtensionRule

@@ -32,11 +32,7 @@
                     </ToolBarTray>
                     <ToolBarTray>
                         <ToolBar>
-                            <TextBlock
-                            Padding="2"
-                            VerticalAlignment="Center">
-                            Preset:
-                            </TextBlock>
+                            <TextBlock Padding="2" VerticalAlignment="Center">Preset:</TextBlock>
                             <Button>Open</Button>
                             <Button>Save</Button>
                         </ToolBar>
@@ -51,30 +47,40 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="LightBlue">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Margin="5"
-                                    Text="Add prefix"/>
-                                <Button
-                                    Content="Edit"
-                                    Tag="{Binding Index}"
-                                    Click="btnEditRule_Click"
-                                    Grid.Column="1"/>
-                                <Button
-                                    Margin="5"
-                                    Background="Salmon"
-                                    BorderBrush="Transparent"
-                                    Width="10"
-                                    Height="10"
-                                    Tag="{Binding Index}"
-                                    Click="btnRemoveMethodItself_Click"
-                                    Grid.Column="2"/>
-                            </Grid>
+                            <Border BorderBrush="DarkGray" BorderThickness="1" Background="WhiteSmoke">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="5" Text="{Binding Name}"/>
+                                    <Button
+                                        Margin="5"
+                                        Background="Transparent"
+                                        Foreground="Blue"
+                                        BorderBrush="Transparent"
+                                        Tag="{Binding Index}"
+                                        Click="btnEditRule_Click"
+                                        Grid.Column="1">
+                                        <Button.Content>
+                                            <Underline>Edit</Underline>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button
+                                        Margin="5"
+                                        Background="Transparent"
+                                        Foreground="Red"
+                                        BorderBrush="Transparent"
+                                        Tag="{Binding Index}"
+                                        Click="btnRemoveMethodItself_Click"
+                                        Grid.Column="2">
+                                        <Button.Content>
+                                            <Underline>Remove</Underline>
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

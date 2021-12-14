@@ -1,5 +1,4 @@
-using RenameRule;
-using System;
+using Contract;
 
 namespace AddPrefixRule
 {

@@ -1,6 +1,4 @@
-﻿using RenameRule;
-
-namespace Contract
+﻿namespace Contract
 {
     public interface IRenameRuleParser
     {

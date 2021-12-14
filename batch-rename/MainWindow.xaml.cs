@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace batch_rename
 {
@@ -59,6 +60,10 @@ namespace batch_rename
 
                 Button button = new Button()
                 {
+                    Margin = new Thickness(0, 0, 5, 0),
+                    Padding = new Thickness(5, 3, 5, 3),
+                    BorderThickness = new Thickness(0),
+                    Background = new SolidColorBrush(Colors.Transparent),
                     Content = rule.Name,
                     Tag = rule.Name
                 };

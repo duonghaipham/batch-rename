@@ -1,4 +1,4 @@
-using RenameRule;
+using Contract;
 using System;
 
 namespace AllLowerRule

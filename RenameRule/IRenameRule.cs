@@ -1,6 +1,4 @@
-using System;
-
-namespace RenameRule
+namespace Contract
 {
     public interface IRenameRule
     {

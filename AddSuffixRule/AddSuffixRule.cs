@@ -1,20 +1,19 @@
-using RenameRule;
-using System;
+using Contract;
 
 namespace AddSuffixRule
 {
     public class AddSuffixRule : IRenameRule
     {
-        private string suffix;
+        public string Suffix;
 
         public AddSuffixRule(string suffix)
         {
-            this.suffix = suffix;
+            Suffix = suffix;
         }
 
         public string Rename(string original)
         {
-            return $"{original}{suffix}";
+            return $"{original}{Suffix}";
         }
     }
 }
