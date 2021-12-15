@@ -25,9 +25,9 @@
                 <StackPanel DockPanel.Dock="Top">
                     <ToolBarTray >
                         <ToolBar>
-                            <TextBlock Padding="2" VerticalAlignment="Center">Method:</TextBlock>
-                            <Button Click="btnRemoveMethod_Click">Remove</Button>
-                            <Button Click="btnClearMethod_Click">Clear</Button>
+                            <TextBlock Padding="2" VerticalAlignment="Center">Rule:</TextBlock>
+                            <Button Click="btnRemoveRunRule_Click">Remove</Button>
+                            <Button Click="btnClearRunRule_Click">Clear</Button>
                         </ToolBar>
                     </ToolBarTray>
                     <ToolBarTray>
@@ -37,7 +37,7 @@
                             <Button>Save</Button>
                         </ToolBar>
                     </ToolBarTray>
-                    <WrapPanel x:Name="wpMethodChooser" />
+                    <WrapPanel x:Name="wpRuleChooser" />
                 </StackPanel>
                 <ListView x:Name="lvRunRules">
                     <ListView.ItemContainerStyle>
@@ -61,7 +61,7 @@
                                         Foreground="Blue"
                                         BorderBrush="Transparent"
                                         Tag="{Binding Index}"
-                                        Click="btnEditRule_Click"
+                                        Click="btnEditRunRule_Click"
                                         Grid.Column="1">
                                         <Button.Content>
                                             <Underline>Edit</Underline>
@@ -73,7 +73,7 @@
                                         Foreground="Red"
                                         BorderBrush="Transparent"
                                         Tag="{Binding Index}"
-                                        Click="btnRemoveMethodItself_Click"
+                                        Click="btnRemoveRunRuleItself_Click"
                                         Grid.Column="2">
                                         <Button.Content>
                                             <Underline>Remove</Underline>
@@ -90,8 +90,14 @@
                     <DockPanel>
                         <ToolBarTray DockPanel.Dock="Top">
                             <ToolBar>
-                                <Button Click="btnAddFiles_Click">Add</Button>
-                                <Button Click="btnClearFiles_Click">Clear</Button>
+                                <Menu Background="Transparent">
+                                    <MenuItem Header="Add">
+                                        <MenuItem Header="Files..." Click="btnAddFiles_Click" />
+                                        <MenuItem Header="Directories..." />
+                                    </MenuItem>
+                                    <MenuItem Header="Remove" Click="btnRemoveFile_Click" />
+                                    <MenuItem Header="Clear" Click="btnClearFiles_Click" />
+                                </Menu>
                             </ToolBar>
                         </ToolBarTray>
                         <ListView x:Name="lvFiles">
@@ -110,8 +116,13 @@
                     <DockPanel>
                         <ToolBarTray DockPanel.Dock="Top">
                             <ToolBar>
-                                <Button Click="btnAddFolders_Click">Add</Button>
-                                <Button Click="btnClearFolders_Click">Clear</Button>
+                                <Menu Background="Transparent">
+                                    <MenuItem Header="Add">
+                                        <MenuItem Header="Folders..." Click="btnAddFolders_Click" />
+                                    </MenuItem>
+                                    <MenuItem Header="Remove" Click="btnRemoveFolder_Click" />
+                                    <MenuItem Header="Clear" Click="btnClearFolders_Click" />
+                                </Menu>
                             </ToolBar>
                         </ToolBarTray>
                         <ListView x:Name="lvFolders"/>

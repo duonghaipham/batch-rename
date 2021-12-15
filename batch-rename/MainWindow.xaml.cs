@@ -16,15 +16,25 @@ namespace batch_rename
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Prototype to create a functioned window which handles a rule
         private Dictionary<string, BaseWindow> _windowPrototypes = new Dictionary<string, BaseWindow>();
+
+        // Prototype to create a rule parser which handles a rule
         private Dictionary<string, IRenameRuleParser> _ruleParserPrototypes = new Dictionary<string, IRenameRuleParser>();
-        private BindingList<RunRule> _rules = new BindingList<RunRule>();
+
+        // List of rules to impose
+        private BindingList<RunRule> _runRules = new BindingList<RunRule>();
+
+        // List of those files which is ready to impose on
+        private BindingList<File> _files = new BindingList<File>();
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        // Load rule in dll, then render prototype buttons
+        // Start to make data-binding for run rules list and files list
         private void winMain_Loaded(object sender, RoutedEventArgs e)
         {
             var exeFolder = AppDomain.CurrentDomain.BaseDirectory;
@@ -54,6 +64,7 @@ namespace batch_rename
                 }
             }
 
+            // Dynamically load rule and create buttons for desired rules
             foreach (var item in _ruleParserPrototypes)
             {
                 var rule = item.Value;
@@ -68,29 +79,81 @@ namespace batch_rename
                     Tag = rule.Name
                 };
 
-                button.Click += btnPrototype_Click;
-                wpMethodChooser.Children.Add(button);
+                button.Click += btnAddRunRule_Click;
+                wpRuleChooser.Children.Add(button);
             }
 
-            lvRunRules.ItemsSource = _rules;
+            lvRunRules.ItemsSource = _runRules;
+
+            lvFiles.ItemsSource = _files;
         }
 
-        private void btnPrototype_Click(object sender, RoutedEventArgs e)
+        #region Run rule handlers
+
+        // Create a new run rule by clicking on a prototype rule button
+        // Add new rule to run rule list
+        private void btnAddRunRule_Click(object sender, RoutedEventArgs e)
         {
             string selectedTagName = (sender as Button).Tag as String;
 
-            _rules.Add(new RunRule()
+            _runRules.Add(new RunRule()
             {
-                Index = _rules.Count,
+                Index = _runRules.Count,
                 Name = selectedTagName,
                 Command = ""
             });
         }
 
-        private void btnClearMethod_Click(object sender, RoutedEventArgs e)
+        // Edit rule in a window dialog
+        private void btnEditRunRule_Click(object sender, RoutedEventArgs e)
         {
-            _rules.Clear();
+            int index = int.Parse((sender as Button).Tag.ToString());
+            RunRule rule = _runRules[index];
+
+            var window = _windowPrototypes[rule.Name].CreateInstance();
+            window.Command = rule.Command;
+
+            if ((bool)window.ShowDialog())
+            {
+                _runRules[index].Command = window.Command;
+
+                EvokeToUpdateNewName();
+            }
         }
+
+        // Remove a run rule by selected index
+        private void btnRemoveRunRule_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvRunRules.SelectedIndex != -1)
+            {
+                _runRules.RemoveAt(lvRunRules.SelectedIndex);
+
+                UpdateOrder();
+
+                EvokeToUpdateNewName();
+            }
+        }
+
+        // Remove a run rule by its Remove button
+        private void btnRemoveRunRuleItself_Click(object sender, RoutedEventArgs e)
+        {
+            Button btnRemove = sender as Button;
+            _runRules.RemoveAt(int.Parse(btnRemove.Tag.ToString()));
+
+            UpdateOrder();
+
+            EvokeToUpdateNewName();
+        }
+
+        // Clear all run rules
+        private void btnClearRunRule_Click(object sender, RoutedEventArgs e)
+        {
+            _runRules.Clear();
+        }
+
+        #endregion
+
+        #region Files handlers
 
         private void btnAddFiles_Click(object sender, RoutedEventArgs e)
         {
@@ -100,67 +163,89 @@ namespace batch_rename
             {
                 for (int i = 0; i < openFileDialog.FileNames.Length; i++)
                 {
-                    lvFiles.Items.Add(new File(
-                        openFileDialog.SafeFileNames[i],
-                        "",
-                        openFileDialog.FileNames[i],
-                        ""));
+                    _files.Add(new File()
+                    {
+                        Name = openFileDialog.SafeFileNames[i],
+                        NewName = ImposeRule(openFileDialog.SafeFileNames[i]),
+                        Path = openFileDialog.FileNames[i],
+                        Error = ""
+                    });
                 }
+            }
+        }
+
+        private void btnRemoveFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvFiles.SelectedIndex != -1)
+            {
+                _files.RemoveAt(lvFiles.SelectedIndex);
             }
         }
 
         private void btnClearFiles_Click(object sender, RoutedEventArgs e)
         {
-            lvFolders.Items.Clear();
+            _files.Clear();
         }
+
+        #endregion
+
+        #region Folder handlers
 
         private void btnAddFolders_Click(object sender, RoutedEventArgs e)
         {
         }
 
+        private void btnRemoveFolder_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void btnClearFolders_Click(object sender, RoutedEventArgs e)
         {
-            lvFiles.Items.Clear();
         }
 
-        private void btnRemoveMethodItself_Click(object sender, RoutedEventArgs e)
-        {
-            Button btnRemove = sender as Button;
-            _rules.RemoveAt(int.Parse(btnRemove.Tag.ToString()));
+        #endregion
 
-            UpdateOrder();
-        }
+        #region Helpers business
 
+        // Iterate over the current rules list to update new index, which is stored in Tag property
+        // Index changed due to some actions like add, delete, edit a rule
         private void UpdateOrder()
         {
-            for (int i = 0; i < _rules.Count; i++)
-                _rules[i].Index = i;
+            for (int i = 0; i < _runRules.Count; i++)
+                _runRules[i].Index = i;
 
             lvRunRules.ItemsSource = null;
-            lvRunRules.ItemsSource = _rules;
+            lvRunRules.ItemsSource = _runRules;
         }
 
-        private void btnRemoveMethod_Click(object sender, RoutedEventArgs e)
+        // Impose rule(s) to original string, return a string which satisfied with all current rules 
+        private string ImposeRule(string original)
         {
-            if (lvRunRules.SelectedIndex != -1)
+            string newName = original;
+
+            foreach (var runRule in _runRules)
             {
-                _rules.RemoveAt(lvRunRules.SelectedIndex);
-                UpdateOrder();
+                if (!string.IsNullOrEmpty(runRule.Command))
+                {
+                    IRenameRuleParser parser = _ruleParserPrototypes[runRule.Name];
+                    IRenameRule rule = parser.Parse(runRule.Command);
+                    newName = rule.Rename(newName);
+                }
+            }
+
+            return newName;
+        }
+
+        // Evoke to update new file name as if changing rule, such as add, delete, edit rule(s)
+        private void EvokeToUpdateNewName()
+        {
+            foreach (var file in _files)
+            {
+                file.NewName = ImposeRule(file.Name);
             }
         }
 
-        private void btnEditRule_Click(object sender, RoutedEventArgs e)
-        {
-            int index = int.Parse((sender as Button).Tag.ToString());
-            RunRule rule = _rules[index];
-
-            var window = _windowPrototypes[rule.Name].CreateInstance();
-            window.Command = rule.Command;
-
-            if ((bool)window.ShowDialog())
-            {
-                _rules[index].Command = window.Command;
-            }
-        }
+        #endregion
     }
 }

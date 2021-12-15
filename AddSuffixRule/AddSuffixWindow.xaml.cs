@@ -1,32 +1,32 @@
 ﻿using Contract;
 using System.Windows;
 
-namespace AddPrefixRule
+namespace AddSuffixRule
 {
     /// <summary>
-    /// Interaction logic for AddPrefixWindow.xaml
+    /// Interaction logic for AddSuffixWindow.xaml
     /// </summary>
-    public partial class AddPrefixWindow : BaseWindow
+    public partial class AddSuffixWindow : BaseWindow
     {
-        public override string ClassName => "AddPrefix";
+        public override string ClassName => "AddSuffix";
 
-        public AddPrefixWindow()
+        public AddSuffixWindow()
         {
             InitializeComponent();
         }
 
         public override BaseWindow CreateInstance()
         {
-            return new AddPrefixWindow();
+            return new AddSuffixWindow();
         }
 
         private void spMain_Loaded(object sender, RoutedEventArgs e)
         {
-            AddPrefixRuleParser parser = new AddPrefixRuleParser();
+            AddSuffixRuleParser parser = new AddSuffixRuleParser();
             if (!string.IsNullOrEmpty(Command))
             {
-                AddPrefixRule rule = parser.Parse(Command) as AddPrefixRule;
-                txtPrefix.Text = rule.Prefix;
+                AddSuffixRule rule = parser.Parse(Command) as AddSuffixRule;
+                txtSuffix.Text = rule.Suffix;
             }
         }
 
@@ -37,7 +37,7 @@ namespace AddPrefixRule
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            Command = $"{ClassName} {txtPrefix.Text}";
+            Command = $"{ClassName} {txtSuffix.Text}";
             DialogResult = true;
         }
     }
