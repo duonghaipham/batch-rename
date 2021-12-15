@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Forms;
 
 namespace batch_rename
 {
@@ -28,12 +29,21 @@ namespace batch_rename
         // List of those files which is ready to impose on
         private BindingList<File> _files = new BindingList<File>();
 
+        // List of those folders which is ready to impose on
+        private BindingList<File> _folders = new BindingList<File>();
+
+        private enum FileType
+        {
+            File,
+            Folder
+        }
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        // Load rule in dll, then render prototype buttons
+        // Load rule(s) in dll(s), then render prototype button(s)
         // Start to make data-binding for run rules list and files list
         private void winMain_Loaded(object sender, RoutedEventArgs e)
         {
@@ -69,7 +79,7 @@ namespace batch_rename
             {
                 var rule = item.Value;
 
-                Button button = new Button()
+                var button = new System.Windows.Controls.Button()
                 {
                     Margin = new Thickness(0, 0, 5, 0),
                     Padding = new Thickness(5, 3, 5, 3),
@@ -94,7 +104,7 @@ namespace batch_rename
         // Add new rule to run rule list
         private void btnAddRunRule_Click(object sender, RoutedEventArgs e)
         {
-            string selectedTagName = (sender as Button).Tag as String;
+            string selectedTagName = (sender as System.Windows.Controls.Button).Tag as String;
 
             _runRules.Add(new RunRule()
             {
@@ -107,7 +117,7 @@ namespace batch_rename
         // Edit rule in a window dialog
         private void btnEditRunRule_Click(object sender, RoutedEventArgs e)
         {
-            int index = int.Parse((sender as Button).Tag.ToString());
+            int index = int.Parse((sender as System.Windows.Controls.Button).Tag.ToString());
             RunRule rule = _runRules[index];
 
             var window = _windowPrototypes[rule.Name].CreateInstance();
@@ -137,7 +147,7 @@ namespace batch_rename
         // Remove a run rule by its Remove button
         private void btnRemoveRunRuleItself_Click(object sender, RoutedEventArgs e)
         {
-            Button btnRemove = sender as Button;
+            var btnRemove = sender as System.Windows.Controls.Button;
             _runRules.RemoveAt(int.Parse(btnRemove.Tag.ToString()));
 
             UpdateOrder();
@@ -149,31 +159,68 @@ namespace batch_rename
         private void btnClearRunRule_Click(object sender, RoutedEventArgs e)
         {
             _runRules.Clear();
+
+            EvokeToUpdateNewName();
         }
 
         #endregion
 
         #region Files handlers
 
+        // Load one or multiple file(e) by choose it(them) in OpenFileDialog
+        // Before add a new File instance to the files list, firstly, check if it was added to
         private void btnAddFiles_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Multiselect = true;
+
             if (openFileDialog.ShowDialog() == true)
             {
                 for (int i = 0; i < openFileDialog.FileNames.Length; i++)
                 {
-                    _files.Add(new File()
+                    if (!IsAdded(openFileDialog.FileNames[i], (int)FileType.File))
                     {
-                        Name = openFileDialog.SafeFileNames[i],
-                        NewName = ImposeRule(openFileDialog.SafeFileNames[i]),
-                        Path = openFileDialog.FileNames[i],
-                        Error = ""
-                    });
+                        _files.Add(new File()
+                        {
+                            Name = openFileDialog.SafeFileNames[i],
+                            NewName = ImposeRule(openFileDialog.SafeFileNames[i]),
+                            Path = openFileDialog.FileNames[i],
+                            Error = ""
+                        });
+                    }
                 }
             }
         }
 
+        // Load all files inside a directory recursively
+        // Before add a new File instance to the files list, firstly, check if it was added to
+        private void btnAddFilesInDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            var folderBrowserDialog = new FolderBrowserDialog();
+
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string directory = folderBrowserDialog.SelectedPath;
+
+                var files = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories);
+
+                foreach (var file in files)
+                {
+                    if (!IsAdded(file, (int)FileType.File))
+                    {
+                        _files.Add(new File()
+                        {
+                            Name = Path.GetFileName(file),
+                            NewName = ImposeRule(Path.GetFileName(file)),
+                            Path = file,
+                            Error = ""
+                        });
+                    }
+                }
+            }
+        }
+
+        // Remove a file by selected index
         private void btnRemoveFile_Click(object sender, RoutedEventArgs e)
         {
             if (lvFiles.SelectedIndex != -1)
@@ -182,6 +229,7 @@ namespace batch_rename
             }
         }
 
+        // Clear all files
         private void btnClearFiles_Click(object sender, RoutedEventArgs e)
         {
             _files.Clear();
@@ -207,6 +255,21 @@ namespace batch_rename
         #endregion
 
         #region Helpers business
+
+        // Check a file (is representative by its path) whether was added to the files or folders list
+        private bool IsAdded(string path, int type)
+        {
+            BindingList<File> browser;
+            browser = (type == (int)FileType.File) ? _files : _folders;
+            foreach (var item in browser)
+            {
+                if (item.Path == path)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         // Iterate over the current rules list to update new index, which is stored in Tag property
         // Index changed due to some actions like add, delete, edit a rule

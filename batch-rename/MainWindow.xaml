@@ -93,7 +93,7 @@
                                 <Menu Background="Transparent">
                                     <MenuItem Header="Add">
                                         <MenuItem Header="Files..." Click="btnAddFiles_Click" />
-                                        <MenuItem Header="Directories..." />
+                                        <MenuItem Header="Directories..." Click="btnAddFilesInDirectory_Click" />
                                     </MenuItem>
                                     <MenuItem Header="Remove" Click="btnRemoveFile_Click" />
                                     <MenuItem Header="Clear" Click="btnClearFiles_Click" />
