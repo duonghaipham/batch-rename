@@ -1,5 +1,6 @@
 using Contract;
 using System;
+using System.Text.RegularExpressions;
 
 namespace AllLowerRule
 {
@@ -7,7 +8,12 @@ namespace AllLowerRule
     {
         public string Rename(string original)
         {
-            return original.ToLower();
+            string newName = original;
+
+            newName = newName.ToLower();
+            newName = Regex.Replace(newName, @"\s+", "");
+
+            return newName;
         }
     }
 }
