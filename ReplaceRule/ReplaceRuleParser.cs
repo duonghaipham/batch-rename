@@ -1,7 +1,5 @@
 ﻿using Contract;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ReplaceRule
 {
@@ -15,7 +13,15 @@ namespace ReplaceRule
 
         public IRenameRule Parse(string line)
         {
-            throw new NotImplementedException();
+            string[] tokens = line.Split(new string[] { "Replace " }, StringSplitOptions.None);
+            string[] parts = tokens[1].Split(new string[] { " => " }, StringSplitOptions.None);
+
+            string needle = parts[0].Replace("\"", "");
+            string replacer = parts[1].Replace("\"", "");
+
+            IRenameRule rule = new ReplaceRule(needle, replacer);
+
+            return rule;
         }
     }
 }

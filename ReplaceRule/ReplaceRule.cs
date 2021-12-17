@@ -5,25 +5,24 @@ namespace ReplaceRule
 {
     public class ReplaceRule: IRenameRule
     {
-        private List<string> needles;
-        private string replacer;
+        public string Needle;
+        public string Replacer;
 
-        public ReplaceRule(List<string> needles, string replacer)
+        public ReplaceRule(string needle, string replacer)
         {
-            this.needles = needles;
-            this.replacer = replacer;
+            Needle = needle;
+            Replacer = replacer;
         }
 
         public string Rename(string original)
         {
-            string result = original;
-
-            foreach (string needle in needles)
+            string newName = original;
+            if (!string.IsNullOrEmpty(Needle))
             {
-                result = result.Replace(needle, replacer);
+                newName = original.Replace(Needle, Replacer);
             }
 
-            return result;
+            return newName;
         }
     }
 }
