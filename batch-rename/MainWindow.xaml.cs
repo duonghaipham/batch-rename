@@ -230,6 +230,28 @@ namespace batch_rename
             }
         }
 
+        private void lvFiles_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+
+                foreach (var file in files)
+                {
+                    if (!IsAdded(file, (int)FileType.File))
+                    {
+                        _files.Add(new File()
+                        {
+                            Name = Path.GetFileName(file),
+                            NewName = ImposeRule(Path.GetFileName(file)),
+                            Path = file,
+                            Error = ""
+                        });
+                    }
+                }
+            }
+        }
+
         // Remove a file by selected index
         private void btnRemoveFile_Click(object sender, RoutedEventArgs e)
         {

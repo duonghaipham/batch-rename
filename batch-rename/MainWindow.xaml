@@ -116,7 +116,7 @@
                                 </Menu>
                             </ToolBar>
                         </ToolBarTray>
-                        <ListView x:Name="lvFiles">
+                        <ListView x:Name="lvFiles" Drop="lvFiles_Drop" AllowDrop="True">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}" />
