@@ -6,6 +6,8 @@ namespace AddSuffixRule
     public class AddSuffixRuleParser : IRenameRuleParser
     {
         public string Name => "AddSuffix";
+        public string Title => "Add suffix";
+        public bool IsPlugAndPlay => false;
 
         public IRenameRule Parse(string line)
         {

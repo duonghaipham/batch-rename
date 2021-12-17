@@ -85,7 +85,7 @@ namespace batch_rename
                     Padding = new Thickness(5, 3, 5, 3),
                     BorderThickness = new Thickness(0),
                     Background = new SolidColorBrush(Colors.Transparent),
-                    Content = rule.Name,
+                    Content = rule.Title,
                     Tag = rule.Name
                 };
 
@@ -101,33 +101,43 @@ namespace batch_rename
         #region Run rule handlers
 
         // Create a new run rule by clicking on a prototype rule button
+        // Check rule whether is plug-and-play, for not to render edit rule for no parameters one
         // Add new rule to run rule list
         private void btnAddRunRule_Click(object sender, RoutedEventArgs e)
         {
             string selectedTagName = (sender as System.Windows.Controls.Button).Tag as String;
 
+            IRenameRuleParser parser = _ruleParserPrototypes[selectedTagName];
+
             _runRules.Add(new RunRule()
             {
                 Index = _runRules.Count,
                 Name = selectedTagName,
-                Command = ""
+                Title = parser.Title,
+                IsPlugAndPlay = parser.IsPlugAndPlay,
+                Command = parser.IsPlugAndPlay ? selectedTagName : ""
             });
+
+            EvokeToUpdateNewName();
         }
 
-        // Edit rule in a window dialog
+        // Edit rule in a window dialog, only works with no parameters rule
         private void btnEditRunRule_Click(object sender, RoutedEventArgs e)
         {
             int index = int.Parse((sender as System.Windows.Controls.Button).Tag.ToString());
             RunRule rule = _runRules[index];
 
-            var window = _windowPrototypes[rule.Name].CreateInstance();
-            window.Command = rule.Command;
-
-            if ((bool)window.ShowDialog())
+            if (!rule.IsPlugAndPlay)
             {
-                _runRules[index].Command = window.Command;
+                var window = _windowPrototypes[rule.Name].CreateInstance();
+                window.Command = rule.Command;
 
-                EvokeToUpdateNewName();
+                if ((bool)window.ShowDialog())
+                {
+                    _runRules[index].Command = window.Command;
+
+                    EvokeToUpdateNewName();
+                }
             }
         }
 

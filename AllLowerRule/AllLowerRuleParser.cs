@@ -8,6 +8,8 @@ namespace AllLowerRule
     public class AllLowerRuleParser : IRenameRuleParser
     {
         public string Name => "AllLower";
+        public string Title => "All lower";
+        public bool IsPlugAndPlay => true;
 
         public IRenameRule Parse(string line)
         {

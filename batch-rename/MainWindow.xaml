@@ -54,7 +54,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Margin="5" Text="{Binding Name}"/>
+                                    <TextBlock Margin="5" Text="{Binding Title}"/>
                                     <Button
                                         Margin="5"
                                         Background="Transparent"
@@ -63,6 +63,16 @@
                                         Tag="{Binding Index}"
                                         Click="btnEditRunRule_Click"
                                         Grid.Column="1">
+                                        <Button.Style>
+                                            <Style TargetType="{x:Type Button}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPlugAndPlay}" Value="True">
+                                                        <Setter Property="Visibility" Value="Hidden" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
                                         <Button.Content>
                                             <Underline>Edit</Underline>
                                         </Button.Content>
