@@ -12,6 +12,7 @@
     <ProjectReference Include="..\AddPrefixRule\AddPrefixRule.csproj" />
     <ProjectReference Include="..\AddSuffixRule\AddSuffixRule.csproj" />
     <ProjectReference Include="..\AllLowerRule\AllLowerRule.csproj" />
+    <ProjectReference Include="..\ChangeExtensionRule\ChangeExtensionRule.csproj" />
     <ProjectReference Include="..\RemoveSpaceRule\RemoveSpaceRule.csproj" />
     <ProjectReference Include="..\RenameRule\Contract.csproj" />
   </ItemGroup>

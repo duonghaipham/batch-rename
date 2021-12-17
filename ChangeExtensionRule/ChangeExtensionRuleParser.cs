@@ -1,4 +1,5 @@
 ﻿using Contract;
+using System;
 
 namespace ChangeExtensionRule
 {
@@ -10,7 +11,12 @@ namespace ChangeExtensionRule
 
         public IRenameRule Parse(string line)
         {
-            throw new System.NotImplementedException();
+            string[] tokens = line.Split(new string[] { "ChangeExtension " }, StringSplitOptions.None);
+
+            string extension = tokens[1].Replace("\"", "");
+            IRenameRule rule = new ChangeExtensionRule(extension);
+
+            return rule;
         }
     }
 }

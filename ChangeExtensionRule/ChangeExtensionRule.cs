@@ -1,20 +1,26 @@
 using Contract;
-using System.Text.RegularExpressions;
+using System.IO;
 
 namespace ChangeExtensionRule
 {
     public class ChangeExtensionRule: IRenameRule
     {
-        private string extension;
+        public string Extension { get; }
 
         public ChangeExtensionRule(string extension)
         {
-            this.extension = extension;
+            Extension = extension;
         }
 
         public string Rename(string original)
         {
-            return Regex.Replace(original, @"\[.]\w+\g", '.' + extension);
+            string newName = original;
+            if (!string.IsNullOrEmpty(Extension))
+            {
+                newName = Path.GetFileNameWithoutExtension(original) + "." + Extension;
+            }
+
+            return newName;
         }
     }
 }

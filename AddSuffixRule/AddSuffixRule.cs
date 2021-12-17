@@ -1,4 +1,5 @@
 using Contract;
+using System.IO;
 
 namespace AddSuffixRule
 {
@@ -13,7 +14,9 @@ namespace AddSuffixRule
 
         public string Rename(string original)
         {
-            return $"{original}{Suffix}";
+            string newName = Path.GetFileNameWithoutExtension(original) + Suffix + Path.GetExtension(original);
+            
+            return newName;
         }
     }
 }
