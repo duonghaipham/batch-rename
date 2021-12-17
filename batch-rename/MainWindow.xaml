@@ -33,8 +33,14 @@
                     <ToolBarTray>
                         <ToolBar>
                             <TextBlock Padding="2" VerticalAlignment="Center">Preset:</TextBlock>
-                            <Button>Open</Button>
-                            <Button>Save</Button>
+                            <Button Click="btnOpenPreset_Click">Open</Button>
+                            <Button Click="btnSavePreset_Click">Save</Button>
+                            <Border
+                                Margin="5,0,0,0"
+                                BorderThickness="1"
+                                BorderBrush="LightGray">
+                                <Label x:Name="lblPresetName" Width="150" />
+                            </Border>
                         </ToolBar>
                     </ToolBarTray>
                     <WrapPanel x:Name="wpRuleChooser" />

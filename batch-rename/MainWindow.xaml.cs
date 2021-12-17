@@ -320,5 +320,79 @@ namespace batch_rename
         }
 
         #endregion
+
+        #region Preset handlers
+
+        private void btnOpenPreset_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            
+            if (openFileDialog.ShowDialog() == true)
+            {
+                using (StreamReader reader = new StreamReader(openFileDialog.FileName))
+                {
+                    _runRules.Clear();
+                    lblPresetName.Content = openFileDialog.SafeFileName;
+
+                    while (!reader.EndOfStream)
+                    {
+                        string line = reader.ReadLine();
+
+                        if (!string.IsNullOrEmpty(line))
+                        {
+                            int firstSpaceIndex = line.IndexOf(" ");
+                            string firstWord = (firstSpaceIndex > 0) ? line.Substring(0, firstSpaceIndex) : line;
+
+                            IRenameRuleParser parser = _ruleParserPrototypes[firstWord];
+                            IRenameRule rule = parser.Parse(line);
+
+                            _runRules.Add(new RunRule()
+                            {
+                                Index = _runRules.Count,
+                                Name = firstWord,
+                                Title = parser.Title,
+                                IsPlugAndPlay = parser.IsPlugAndPlay,
+                                Command = line
+                            });
+                        }
+                    }
+
+                    EvokeToUpdateNewName();
+                }
+            }
+        }
+
+        private void btnSavePreset_Click(object sender, RoutedEventArgs e)
+        {
+            if (_runRules.Count > 0)
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Preset file (*.txt)|*.txt";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string writer = "";
+
+                    for (int i = 0; i < _runRules.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(_runRules[i].Command))
+                        {
+                            writer += _runRules[i].Command;
+
+                            if (i != _runRules.Count - 1)
+                                writer += '\n';
+                        }
+                    }
+
+                    System.IO.File.WriteAllText(saveFileDialog.FileName, writer);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("You have to define at least one rule");
+            }
+        }
+
+        #endregion
     }
 }
