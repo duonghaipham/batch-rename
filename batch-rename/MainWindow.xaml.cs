@@ -94,9 +94,74 @@ namespace batch_rename
             }
 
             lvRunRules.ItemsSource = _runRules;
-
             lvFiles.ItemsSource = _files;
         }
+
+        #region Project handlers
+
+        private void btnOpenProject_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (ReadProjectFile(openFileDialog.FileName, false) == true)
+                {
+                    Title = $"Batch rename - {openFileDialog.FileName}";
+
+                    EvokeToUpdateNewName();
+                }
+            }
+        }
+
+        private void btnSaveProject_Click(object sender, RoutedEventArgs e)
+        {
+            if (Title == "Batch rename")
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Project file (*.prj)|*.prj";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string projectName = saveFileDialog.FileName;
+
+                    SaveProjectFile(projectName);
+
+                    Title = $"Batch rename - {projectName}";
+                }
+            }
+            else
+            {
+                string projectName = Title.Split(new string[] { "Batch rename - " }, StringSplitOptions.None)[1];
+
+                SaveProjectFile(projectName);
+            }
+        }
+
+        private void btnSaveAsProject_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "Project file (*.prj)|*.prj";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string projectName = saveFileDialog.FileName;
+
+                SaveProjectFile(projectName);
+
+                Title = $"Batch rename - {projectName}";
+            }
+        }
+
+        private void btnCloseProject_Click(object sender, RoutedEventArgs e)
+        {
+            _runRules.Clear();
+            _files.Clear();
+            _folders.Clear();
+            Title = "Batch rename";
+        }
+
+        #endregion
 
         #region Run rule handlers
 
@@ -286,6 +351,45 @@ namespace batch_rename
 
         #endregion
 
+        #region Preset handlers
+
+        private void btnOpenPreset_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (ReadProjectFile(openFileDialog.FileName, true) == true)
+                {
+                    lblPresetName.Content = openFileDialog.SafeFileName;
+
+                    EvokeToUpdateNewName();
+                }
+            }
+        }
+
+        private void btnSavePreset_Click(object sender, RoutedEventArgs e)
+        {
+            if (_runRules.Count > 0)
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Preset file (*.txt)|*.txt";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string writer = CreateWriterFromRunRules();
+
+                    System.IO.File.WriteAllText(saveFileDialog.FileName, writer);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("You have to define at least one rule");
+            }
+        }
+
+        #endregion
+
         #region Helpers business
 
         // Check a file (is representative by its path) whether was added to the files or folders list
@@ -341,77 +445,137 @@ namespace batch_rename
             }
         }
 
-        #endregion
-
-        #region Preset handlers
-
-        private void btnOpenPreset_Click(object sender, RoutedEventArgs e)
+        private string CreateWriterFromRunRules()
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            
-            if (openFileDialog.ShowDialog() == true)
-            {
-                using (StreamReader reader = new StreamReader(openFileDialog.FileName))
-                {
-                    _runRules.Clear();
-                    lblPresetName.Content = openFileDialog.SafeFileName;
+            string writer = "Rules\n";
 
+            for (int i = 0; i < _runRules.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(_runRules[i].Command))
+                {
+                    writer += _runRules[i].Command + "\n";
+                }
+            }
+
+            return writer;
+        }
+
+        private string CreateWriterFromTargets(int type)
+        {
+            BindingList<File> targets;
+            string writer = "";
+
+            if (type == (int)FileType.File)
+            {
+                writer = "Files\n";
+                targets = _files;
+            }
+            else
+            {
+                writer = "Folders\n";
+                targets = _folders;
+            }
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(targets[i].Path))
+                {
+                    writer += targets[i].Path + "\n";
+                }
+            }
+
+            return writer;
+        }
+
+        private void SaveProjectFile(string projectName)
+        {
+            string writer = "";
+
+            writer += CreateWriterFromRunRules();
+            writer += CreateWriterFromTargets((int)FileType.File);
+            writer += CreateWriterFromTargets((int)FileType.Folder);
+
+            System.IO.File.WriteAllText(projectName, writer);
+        }
+
+        private bool ReadProjectFile(string fileName, bool isOnlyPreset)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(fileName))
+                {
+                    if (!isOnlyPreset)
+                    {
+                        _files.Clear();
+                        _folders.Clear();
+                    }
+
+                    _runRules.Clear();
+
+                    string state = "";
                     while (!reader.EndOfStream)
                     {
                         string line = reader.ReadLine();
 
-                        if (!string.IsNullOrEmpty(line))
+                        if (line == "Rules" || line == "Files" || line == "Folders")
                         {
-                            int firstSpaceIndex = line.IndexOf(" ");
-                            string firstWord = (firstSpaceIndex > 0) ? line.Substring(0, firstSpaceIndex) : line;
-
-                            IRenameRuleParser parser = _ruleParserPrototypes[firstWord];
-                            IRenameRule rule = parser.Parse(line);
-
-                            _runRules.Add(new RunRule()
+                            state = line;
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(line))
                             {
-                                Index = _runRules.Count,
-                                Name = firstWord,
-                                Title = parser.Title,
-                                IsPlugAndPlay = parser.IsPlugAndPlay,
-                                Command = line
-                            });
+                                if (state == "Rules")
+                                {
+                                    int firstSpaceIndex = line.IndexOf(" ");
+                                    string firstWord = (firstSpaceIndex > 0) ? line.Substring(0, firstSpaceIndex) : line;
+
+                                    IRenameRuleParser parser = _ruleParserPrototypes[firstWord];
+                                    IRenameRule rule = parser.Parse(line);
+
+                                    _runRules.Add(new RunRule()
+                                    {
+                                        Index = _runRules.Count,
+                                        Name = firstWord,
+                                        Title = parser.Title,
+                                        IsPlugAndPlay = parser.IsPlugAndPlay,
+                                        Command = line
+                                    });
+                                }
+                                else if (state == "Files")
+                                {
+                                    _files.Add(new File()
+                                    {
+                                        Name = Path.GetFileName(line),
+                                        NewName = "",
+                                        Path = line,
+                                        Error = ""
+                                    }) ;
+                                }
+                                else if (state == "Folders")
+                                {
+                                    _files.Add(new File()
+                                    {
+                                        Name = "",
+                                        NewName = "",
+                                        Path = line,
+                                        Error = ""
+                                    });
+                                }
+                                else
+                                {
+
+                                }
+                            }
                         }
                     }
 
-                    EvokeToUpdateNewName();
+                    return true;
                 }
             }
-        }
-
-        private void btnSavePreset_Click(object sender, RoutedEventArgs e)
-        {
-            if (_runRules.Count > 0)
+            catch (Exception)
             {
-                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-                saveFileDialog.Filter = "Preset file (*.txt)|*.txt";
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    string writer = "";
-
-                    for (int i = 0; i < _runRules.Count; i++)
-                    {
-                        if (!string.IsNullOrEmpty(_runRules[i].Command))
-                        {
-                            writer += _runRules[i].Command;
-
-                            if (i != _runRules.Count - 1)
-                                writer += '\n';
-                        }
-                    }
-
-                    System.IO.File.WriteAllText(saveFileDialog.FileName, writer);
-                }
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("You have to define at least one rule");
+                return false;
             }
         }
 

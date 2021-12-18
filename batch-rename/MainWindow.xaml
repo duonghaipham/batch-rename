@@ -5,13 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:batch_rename"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Batch rename" Height="450" Width="800"
         Loaded="winMain_Loaded">
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button>Refresh</Button>
-                <Button>Help</Button>
+                <Menu Background="Transparent">
+                    <MenuItem Header="Project">
+                        <MenuItem Header="Open..." Click="btnOpenProject_Click" />
+                        <MenuItem Header="Save..." Click="btnSaveProject_Click" />
+                        <MenuItem Header="Save as..." Click="btnSaveAsProject_Click" />
+                        <MenuItem Header="Close..." Click="btnCloseProject_Click" />
+                    </MenuItem>
+                </Menu>
                 <Button>Start Batch</Button>
             </ToolBar>
         </ToolBarTray>
@@ -119,10 +125,9 @@
                         <ListView x:Name="lvFiles" Drop="lvFiles_Drop" AllowDrop="True">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}" />
-                                    <GridViewColumn Header="New name" Width="100" DisplayMemberBinding="{Binding NewName}" />
+                                    <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}" />
+                                    <GridViewColumn Header="New name" Width="150" DisplayMemberBinding="{Binding NewName}" />
                                     <GridViewColumn Header="Path" Width="200" DisplayMemberBinding="{Binding Path}" />
-                                    <GridViewColumn Header="Error" Width="100" DisplayMemberBinding="{Binding Error}" />
                                 </GridView>
                             </ListView.View>
                         </ListView>
