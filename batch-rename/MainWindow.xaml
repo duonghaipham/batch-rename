@@ -146,7 +146,15 @@
                                 </Menu>
                             </ToolBar>
                         </ToolBarTray>
-                        <ListView x:Name="lvFolders"/>
+                        <ListView x:Name="lvFolders" Drop="lvFolders_Drop" AllowDrop="True">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}" />
+                                    <GridViewColumn Header="New name" Width="150" DisplayMemberBinding="{Binding NewName}" />
+                                    <GridViewColumn Header="Path" Width="200" DisplayMemberBinding="{Binding Path}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </DockPanel>
                 </TabItem>
             </TabControl>

@@ -7,7 +7,6 @@ namespace batch_rename
         private string _name;
         private string _newName;
         private string _path;
-        private string _error;
 
         public string Name 
         {
@@ -43,18 +42,6 @@ namespace batch_rename
             {
                 _path = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Path"));
-            }
-        }
-        public string Error
-        {
-            get
-            {
-                return _error;
-            }
-            set
-            {
-                _error = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Error"));
             }
         }
 

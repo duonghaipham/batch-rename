@@ -95,6 +95,7 @@ namespace batch_rename
 
             lvRunRules.ItemsSource = _runRules;
             lvFiles.ItemsSource = _files;
+            lvFolders.ItemsSource = _folders;
         }
 
         #region Project handlers
@@ -259,8 +260,7 @@ namespace batch_rename
                         {
                             Name = openFileDialog.SafeFileNames[i],
                             NewName = ImposeRule(openFileDialog.SafeFileNames[i]),
-                            Path = openFileDialog.FileNames[i],
-                            Error = ""
+                            Path = openFileDialog.FileNames[i]
                         });
                     }
                 }
@@ -287,8 +287,7 @@ namespace batch_rename
                         {
                             Name = Path.GetFileName(file),
                             NewName = ImposeRule(Path.GetFileName(file)),
-                            Path = file,
-                            Error = ""
+                            Path = file
                         });
                     }
                 }
@@ -309,8 +308,7 @@ namespace batch_rename
                         {
                             Name = Path.GetFileName(file),
                             NewName = ImposeRule(Path.GetFileName(file)),
-                            Path = file,
-                            Error = ""
+                            Path = file
                         });
                     }
                 }
@@ -338,15 +336,53 @@ namespace batch_rename
 
         private void btnAddFolders_Click(object sender, RoutedEventArgs e)
         {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string directory = folderBrowserDialog.SelectedPath;
+
+                _folders.Add(new File()
+                {
+                    Name = Path.GetFileName(directory),
+                    NewName = ImposeRule(Path.GetFileName(directory)),
+                    Path = directory
+                });
+            }
         }
 
         private void btnRemoveFolder_Click(object sender, RoutedEventArgs e)
         {
+            if (lvFolders.SelectedIndex != -1)
+            {
+                _folders.RemoveAt(lvFolders.SelectedIndex);
+            }
+        }
 
+        private void lvFolders_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] folders = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+
+                foreach (var folder in folders)
+                {
+                    if (!IsAdded(folder, (int)FileType.File))
+                    {
+                        _folders.Add(new File()
+                        {
+                            Name = Path.GetFileName(folder),
+                            NewName = ImposeRule(Path.GetFileName(folder)),
+                            Path = folder
+                        });
+                    }
+                }
+            }
         }
 
         private void btnClearFolders_Click(object sender, RoutedEventArgs e)
         {
+            _folders.Clear();
         }
 
         #endregion
@@ -442,6 +478,11 @@ namespace batch_rename
             foreach (var file in _files)
             {
                 file.NewName = ImposeRule(file.Name);
+            }
+
+            foreach (var folder in _folders)
+            {
+                folder.NewName = ImposeRule(folder.Name);
             }
         }
 
@@ -548,8 +589,7 @@ namespace batch_rename
                                     {
                                         Name = Path.GetFileName(line),
                                         NewName = "",
-                                        Path = line,
-                                        Error = ""
+                                        Path = line
                                     }) ;
                                 }
                                 else if (state == "Folders")
@@ -558,8 +598,7 @@ namespace batch_rename
                                     {
                                         Name = "",
                                         NewName = "",
-                                        Path = line,
-                                        Error = ""
+                                        Path = line
                                     });
                                 }
                                 else
