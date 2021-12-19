@@ -162,6 +162,11 @@ namespace batch_rename
             Title = "Batch rename";
         }
 
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         #endregion
 
         #region Run rule handlers
