@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:batch_rename"
         mc:Ignorable="d"
         Title="Batch rename" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
         Loaded="winMain_Loaded">
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">

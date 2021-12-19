@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:base="clr-namespace:Contract;assembly=Contract"
     mc:Ignorable="d"
+    WindowStartupLocation="CenterScreen"
     Title="Add suffix" Height="175" Width="300">
     <StackPanel Loaded="spMain_Loaded">
         <Border Padding="15,10,15,10">
