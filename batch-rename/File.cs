@@ -2,7 +2,7 @@
 
 namespace batch_rename
 {
-    internal class File : INotifyPropertyChanged
+    public class File : INotifyPropertyChanged
     {
         private string _name;
         private string _newName;

@@ -45,7 +45,8 @@
                     BorderThickness="0.5"
                     Background="Gainsboro"
                     Margin="10,0,0,0"
-                    Padding="10,5,10,5">
+                    Padding="10,5,10,5"
+                    Click="btnStartBatch_Click">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="0,0,15,0">
                             <Bold >Start batch</Bold>
@@ -89,7 +90,7 @@
                                 Margin="5,0,0,0"
                                 BorderThickness="1"
                                 BorderBrush="LightGray">
-                                <Label x:Name="lblPresetName" Width="150" />
+                                <Label x:Name="lblPresetName" Content="" Width="150" />
                             </Border>
                         </ToolBar>
                     </ToolBarTray>
@@ -172,7 +173,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </DockPanel>
-            <TabControl Grid.Column="1">
+            <TabControl x:Name="tcTargets" Grid.Column="1">
                 <TabItem Header="Rename Files">
                     <DockPanel>
                         <ToolBarTray DockPanel.Dock="Top">

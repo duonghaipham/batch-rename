@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace batch_rename
 {
@@ -98,6 +99,95 @@ namespace batch_rename
             lvFolders.ItemsSource = _folders;
         }
 
+        private void btnStartBatch_Click(object sender, RoutedEventArgs e)
+        {
+            int type = tcTargets.SelectedIndex;
+
+            MessageBoxResult msg = System.Windows.MessageBox.Show(
+                "Are you sure you want to make the renaming?",
+                "Start renaming",
+                MessageBoxButton.YesNo
+            );
+
+            if (msg == MessageBoxResult.Yes)
+            {
+                if (type == (int)FileType.File)
+                {
+                    Dictionary<string, int> duplications = new Dictionary<string, int>();
+
+                    foreach (var file in _files)
+                    {
+                        string newIdealName = Path.Combine(Path.GetDirectoryName(file.Path), file.NewName);
+
+                        try
+                        {
+                            System.IO.File.Move(
+                                file.Path,
+                                newIdealName
+                            );
+                        }
+                        catch (Exception)
+                        {
+                            if (duplications.ContainsKey(newIdealName))
+                            {
+                                duplications[newIdealName]++;
+                            }
+                            else
+                            {
+                                duplications[newIdealName] = 1;
+                            }
+
+                            string newLessCollisionName = $"{Path.GetFileNameWithoutExtension(file.NewName)} ({duplications[newIdealName]}){Path.GetExtension(file.NewName)}";
+
+                            System.IO.File.Move(
+                                file.Path,
+                                Path.Combine(Path.GetDirectoryName(file.Path), newLessCollisionName)
+                            );
+                        }
+                    }
+
+                    _files.Clear();
+                }
+                else
+                {
+                    Dictionary<string, int> duplications = new Dictionary<string, int>();
+
+                    foreach (var folder in _folders)
+                    {
+                        string newIdealName = Path.Combine(Path.GetDirectoryName(folder.Path), folder.NewName);
+
+                        try
+                        {
+                            System.IO.File.Move(
+                                folder.Path,
+                                newIdealName
+                            );
+                        }
+                        catch (Exception)
+                        {
+                            if (duplications.ContainsKey(newIdealName))
+                            {
+                                duplications[newIdealName]++;
+                            }
+                            else
+                            {
+                                duplications[newIdealName] = 1;
+                            }
+
+                            string newLessCollisionName = $"{Path.GetFileNameWithoutExtension(folder.NewName)} ({duplications[newIdealName]})";
+
+                            Directory.Move(
+                                folder.Path,
+                                Path.Combine(Path.GetDirectoryName(folder.Path), newLessCollisionName)
+                            );
+                        }
+                    }
+
+                    _folders.Clear();
+                }
+            }
+        }
+
         #region Project handlers
 
         private void btnOpenProject_Click(object sender, RoutedEventArgs e)
@@ -159,6 +249,7 @@ namespace batch_rename
             _runRules.Clear();
             _files.Clear();
             _folders.Clear();
+            lblPresetName.Content = "";
             Title = "Batch rename";
         }
 
