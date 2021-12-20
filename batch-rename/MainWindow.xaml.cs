@@ -152,7 +152,9 @@ namespace batch_rename
                     }
 
                     _files.Clear();
-                    SaveProjectHandler();
+
+                    if (Title != "Batch rename")
+                        SaveProjectHandler();
                 }
                 else
                 {
@@ -190,7 +192,8 @@ namespace batch_rename
                     }
 
                     _folders.Clear();
-                    SaveProjectHandler();
+                    if (Title != "Batch rename")
+                        SaveProjectHandler();
                 }
             }
         }
