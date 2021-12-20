@@ -219,23 +219,16 @@ namespace batch_rename
         // Handle save a project, whether Save (current) or Save as...
         private void btnSaveProject_Click(object sender, RoutedEventArgs e)
         {
-            SaveProjectHandler();
+            if (Title == "Batch rename")
+                SaveAsProjectHandler();
+            else
+                SaveProjectHandler();
         }
 
         // Always Save as... also known as create a new project
         private void btnSaveAsProject_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-            saveFileDialog.Filter = "Project file (*.prj)|*.prj";
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                string projectName = saveFileDialog.FileName;
-
-                SaveProjectFile(projectName);
-
-                Title = $"Batch rename - {projectName}";
-            }
+            SaveAsProjectHandler();
         }
 
         // Close the current project by clearing all processing data
@@ -646,28 +639,27 @@ namespace batch_rename
             System.IO.File.WriteAllText(projectName, writer);
         }
 
-        // Handle saving project business, if existed project apply save, otherwise apply save as...
+        // Handle saving project business, only if existed project
         private void SaveProjectHandler()
         {
-            if (Title == "Batch rename")
+            string projectName = Title.Split(new string[] { "Batch rename - " }, StringSplitOptions.None)[1];
+
+            SaveProjectFile(projectName);
+        }
+
+        // Handle saving as project business, only if non-existed project
+        private void SaveAsProjectHandler()
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "Project file (*.prj)|*.prj";
+
+            if (saveFileDialog.ShowDialog() == true)
             {
-                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-                saveFileDialog.Filter = "Project file (*.prj)|*.prj";
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    string projectName = saveFileDialog.FileName;
-
-                    SaveProjectFile(projectName);
-
-                    Title = $"Batch rename - {projectName}";
-                }
-            }
-            else
-            {
-                string projectName = Title.Split(new string[] { "Batch rename - " }, StringSplitOptions.None)[1];
+                string projectName = saveFileDialog.FileName;
 
                 SaveProjectFile(projectName);
+
+                Title = $"Batch rename - {projectName}";
             }
         }
 
@@ -725,18 +717,14 @@ namespace batch_rename
                                         Path = line
                                     }) ;
                                 }
-                                else if (state == "Folders")
+                                else
                                 {
-                                    _files.Add(new File()
+                                    _folders.Add(new File()
                                     {
-                                        Name = "",
+                                        Name = Name = Path.GetFileName(line),
                                         NewName = "",
                                         Path = line
                                     });
-                                }
-                                else
-                                {
-
                                 }
                             }
                         }
