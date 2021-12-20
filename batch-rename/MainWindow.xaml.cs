@@ -152,6 +152,7 @@ namespace batch_rename
                     }
 
                     _files.Clear();
+                    SaveProjectHandler();
                 }
                 else
                 {
@@ -189,12 +190,14 @@ namespace batch_rename
                     }
 
                     _folders.Clear();
+                    SaveProjectHandler();
                 }
             }
         }
 
         #region Project handlers
 
+        // Open a new (file) project
         private void btnOpenProject_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -210,31 +213,13 @@ namespace batch_rename
             }
         }
 
+        // Handle save a project, whether Save (current) or Save as...
         private void btnSaveProject_Click(object sender, RoutedEventArgs e)
         {
-            if (Title == "Batch rename")
-            {
-                
-                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-                saveFileDialog.Filter = "Project file (*.prj)|*.prj";
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    string projectName = saveFileDialog.FileName;
-
-                    SaveProjectFile(projectName);
-
-                    Title = $"Batch rename - {projectName}";
-                }
-            }
-            else
-            {
-                string projectName = Title.Split(new string[] { "Batch rename - " }, StringSplitOptions.None)[1];
-
-                SaveProjectFile(projectName);
-            }
+            SaveProjectHandler();
         }
 
+        // Always Save as... also known as create a new project
         private void btnSaveAsProject_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
@@ -602,6 +587,7 @@ namespace batch_rename
             }
         }
 
+        // Simply create a string from run rules
         private string CreateWriterFromRunRules()
         {
             string writer = "Rules\n";
@@ -617,6 +603,7 @@ namespace batch_rename
             return writer;
         }
 
+        // Simply create a string from files or folders
         private string CreateWriterFromTargets(int type)
         {
             BindingList<File> targets;
@@ -644,6 +631,7 @@ namespace batch_rename
             return writer;
         }
 
+        // Write all run rules and files and folders into a project file
         private void SaveProjectFile(string projectName)
         {
             string writer = "";
@@ -655,6 +643,32 @@ namespace batch_rename
             System.IO.File.WriteAllText(projectName, writer);
         }
 
+        // Handle saving project business, if existed project apply save, otherwise apply save as...
+        private void SaveProjectHandler()
+        {
+            if (Title == "Batch rename")
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Project file (*.prj)|*.prj";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string projectName = saveFileDialog.FileName;
+
+                    SaveProjectFile(projectName);
+
+                    Title = $"Batch rename - {projectName}";
+                }
+            }
+            else
+            {
+                string projectName = Title.Split(new string[] { "Batch rename - " }, StringSplitOptions.None)[1];
+
+                SaveProjectFile(projectName);
+            }
+        }
+
+        // Read project file and load its components into corresponding lists
         private bool ReadProjectFile(string fileName, bool isOnlyPreset)
         {
             try
