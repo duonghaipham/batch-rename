@@ -29,14 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AddPrefixRule\AddPrefixRule.csproj" />
-    <ProjectReference Include="..\AddSuffixRule\AddSuffixRule.csproj" />
-    <ProjectReference Include="..\AllLowerRule\AllLowerRule.csproj" />
-    <ProjectReference Include="..\ChangeExtensionRule\ChangeExtensionRule.csproj" />
-    <ProjectReference Include="..\RemoveSpaceRule\RemoveSpaceRule.csproj" />
     <ProjectReference Include="..\RenameRule\Contract.csproj" />
-    <ProjectReference Include="..\ReplaceRule\ReplaceRule.csproj" />
-    <ProjectReference Include="..\ToPascalCaseRule\ToPascalCaseRule.csproj" />
   </ItemGroup>
 
   <ItemGroup>
