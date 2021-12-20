@@ -9,6 +9,7 @@ namespace ChangeExtensionRule
     public partial class ChangeExtensionWindow : BaseWindow
     {
         public override string ClassName => "ChangeExtension";
+        public string Extension { get; set; }
 
         public ChangeExtensionWindow()
         {
@@ -22,11 +23,13 @@ namespace ChangeExtensionRule
 
         private void spMain_Loaded(object sender, RoutedEventArgs e)
         {
+            DataContext = this;
+
             ChangeExtensionRuleParser parser = new ChangeExtensionRuleParser();
             if (!string.IsNullOrEmpty(Command))
             {
                 ChangeExtensionRule rule = parser.Parse(Command) as ChangeExtensionRule;
-                txtExtension.Text = rule.Extension;
+                Extension = rule.Extension;
             }
         }
 
@@ -37,7 +40,7 @@ namespace ChangeExtensionRule
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            Command = $"{ClassName} {txtExtension.Text}";
+            Command = $"{ClassName} {Extension}";
             DialogResult = true;
         }
     }

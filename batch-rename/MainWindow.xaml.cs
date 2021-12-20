@@ -99,6 +99,11 @@ namespace batch_rename
             lvFolders.ItemsSource = _folders;
         }
 
+        // Check whether rename files or folders, then start renaming them
+        // Renaming business is surrounded in try, to handle duplication name
+        // Use a dictionary with new path as key, value is the ammount of key (duplications)
+        // If there is any duplication, append to name an index of duplication
+        // After renaming successfully, increase that index
         private void btnStartBatch_Click(object sender, RoutedEventArgs e)
         {
             int type = tcTargets.SelectedIndex;
@@ -209,6 +214,7 @@ namespace batch_rename
         {
             if (Title == "Batch rename")
             {
+                
                 Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
                 saveFileDialog.Filter = "Project file (*.prj)|*.prj";
 
@@ -244,6 +250,7 @@ namespace batch_rename
             }
         }
 
+        // Close the current project by clearing all processing data
         private void btnCloseProject_Click(object sender, RoutedEventArgs e)
         {
             _runRules.Clear();
@@ -253,6 +260,7 @@ namespace batch_rename
             Title = "Batch rename";
         }
 
+        // Simply close the software
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -390,6 +398,8 @@ namespace batch_rename
             }
         }
 
+        // Drop a/mulitple file(s) into listview
+        // Make sure it has not added to the software yet
         private void lvFiles_Drop(object sender, System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
@@ -430,6 +440,7 @@ namespace batch_rename
 
         #region Folder handlers
 
+        // Load a folder to listview by choose it in FolderBrowserDialog
         private void btnAddFolders_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -438,15 +449,19 @@ namespace batch_rename
             {
                 string directory = folderBrowserDialog.SelectedPath;
 
-                _folders.Add(new File()
+                if (!IsAdded(directory, (int)FileType.Folder))
                 {
-                    Name = Path.GetFileName(directory),
-                    NewName = ImposeRule(Path.GetFileName(directory)),
-                    Path = directory
-                });
+                    _folders.Add(new File()
+                    {
+                        Name = Path.GetFileName(directory),
+                        NewName = ImposeRule(Path.GetFileName(directory)),
+                        Path = directory
+                    });
+                }
             }
         }
 
+        // Remove a folder by selected index
         private void btnRemoveFolder_Click(object sender, RoutedEventArgs e)
         {
             if (lvFolders.SelectedIndex != -1)
@@ -455,6 +470,8 @@ namespace batch_rename
             }
         }
 
+        // Drop a/mulitple folder(s) into listview
+        // Make sure it has not added to the software yet
         private void lvFolders_Drop(object sender, System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
@@ -476,6 +493,7 @@ namespace batch_rename
             }
         }
 
+        // Clear all folders
         private void btnClearFolders_Click(object sender, RoutedEventArgs e)
         {
             _folders.Clear();
@@ -485,6 +503,7 @@ namespace batch_rename
 
         #region Preset handlers
 
+        // Open an available preset and load rules
         private void btnOpenPreset_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -500,6 +519,7 @@ namespace batch_rename
             }
         }
 
+        // Save the current use preset into preset file
         private void btnSavePreset_Click(object sender, RoutedEventArgs e)
         {
             if (_runRules.Count > 0)

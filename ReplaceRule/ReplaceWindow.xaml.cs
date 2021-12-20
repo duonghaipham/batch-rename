@@ -19,6 +19,7 @@ namespace ReplaceRule
     public partial class ReplaceWindow : BaseWindow
     {
         public override string ClassName => "Replace";
+        public string Replace { get; set; }
 
         public ReplaceWindow()
         {
@@ -32,12 +33,14 @@ namespace ReplaceRule
 
         private void spMain_Loaded(object sender, RoutedEventArgs e)
         {
+            DataContext = this;
+
             ReplaceRuleParser parser = new ReplaceRuleParser();
             if (!string.IsNullOrEmpty(Command))
             {
                 ReplaceRule rule = parser.Parse(Command) as ReplaceRule;
                 txtFind.Text = rule.Needle;
-                txtReplace.Text = rule.Replacer;
+                Replace = rule.Replacer;
             }
         }
 
@@ -48,7 +51,7 @@ namespace ReplaceRule
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            Command = $"{ClassName} \"{txtFind.Text}\" => \"{txtReplace.Text}\"";
+            Command = $"{ClassName} \"{txtFind.Text}\" => \"{Replace}\"";
             DialogResult = true;
         }
     }

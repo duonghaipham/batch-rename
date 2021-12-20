@@ -9,7 +9,7 @@ namespace ToPascalCaseRule
     {
         public string Rename(string original)
         {
-            Regex invalidCharsRgx = new Regex("[^_a-zA-Z0-9]");
+            Regex invalidCharsRgx = new Regex("[^._a-zA-Z0-9]");
             Regex whiteSpace = new Regex(@"(?<=\s)");
             Regex startsWithLowerCaseChar = new Regex("^[a-z]");
             Regex firstCharFollowedByUpperCasesOnly = new Regex("(?<=[A-Z])[A-Z0-9]+$");

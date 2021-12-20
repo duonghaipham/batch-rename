@@ -7,16 +7,31 @@
     xmlns:local="clr-namespace:ChangeExtensionRule"
     xmlns:base="clr-namespace:Contract;assembly=Contract"
     mc:Ignorable="d"
-    Title="Change extension" Height="175" Width="300"
+    Title="Change extension" Height="175" Width="350"
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize">
+
+    <Window.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Contract;component/ValidationDictionary.xaml" />
+    </Window.Resources>
+
     <StackPanel Loaded="spMain_Loaded">
         <Border Padding="15,10,15,10">
             <StackPanel>
                 <Label Content="New extension" />
                 <TextBox
                     x:Name="txtExtension"
-                    Padding="5" />
+                    Padding="5"
+                    Validation.ErrorTemplate="{StaticResource fileNameValidationTemplate}"
+                    Style="{StaticResource fileNameRelatedError}">
+                    <TextBox.Text>
+                        <Binding Path="Extension" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <base:FileNameRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
                 <WrapPanel HorizontalAlignment="Right" Margin="0,15,0,0">
                     <Button
                         x:Name="btnCancel"

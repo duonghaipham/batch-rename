@@ -9,6 +9,7 @@ namespace AddSuffixRule
     public partial class AddSuffixWindow : BaseWindow
     {
         public override string ClassName => "AddSuffix";
+        public string Suffix { get; set; }
 
         public AddSuffixWindow()
         {
@@ -22,11 +23,13 @@ namespace AddSuffixRule
 
         private void spMain_Loaded(object sender, RoutedEventArgs e)
         {
+            DataContext = this;
+
             AddSuffixRuleParser parser = new AddSuffixRuleParser();
             if (!string.IsNullOrEmpty(Command))
             {
                 AddSuffixRule rule = parser.Parse(Command) as AddSuffixRule;
-                txtSuffix.Text = rule.Suffix;
+                Suffix = rule.Suffix;
             }
         }
 
@@ -37,7 +40,7 @@ namespace AddSuffixRule
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            Command = $"{ClassName} {txtSuffix.Text}";
+            Command = $"{ClassName} {Suffix}";
             DialogResult = true;
         }
     }
