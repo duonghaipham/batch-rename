@@ -166,10 +166,7 @@ namespace batch_rename
 
                         try
                         {
-                            System.IO.File.Move(
-                                folder.Path,
-                                newIdealName
-                            );
+                            Directory.Move(folder.Path, newIdealName);
                         }
                         catch (Exception)
                         {
@@ -721,7 +718,7 @@ namespace batch_rename
                                 {
                                     _folders.Add(new File()
                                     {
-                                        Name = Name = Path.GetFileName(line),
+                                        Name = Path.GetFileName(line),
                                         NewName = "",
                                         Path = line
                                     });
