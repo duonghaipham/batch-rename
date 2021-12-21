@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReplaceRule\ReplaceRule.csproj" />
+    <ProjectReference Include="..\RenameRule\Contract.csproj" />
   </ItemGroup>
 
 </Project>

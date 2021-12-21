@@ -77,3 +77,4 @@
 
 ### Video demo
 
+[DEMO ĐỒ ÁN BATCH RENAME - LẬP TRÌNH WINDOWS](https://youtu.be/ZcETO-jd8cY)
